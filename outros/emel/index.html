@@ -1,0 +1,78 @@
+<style>img { border: 1px solid black }</style>
+<body style="width: 600px">
+    <h2>In-App Parking</h2>
+    <h4><i>@winnie</i></h4>
+    <p>Since our meeting, I've been researching about the implementation of the in-app parking feature, and I've come to a few roadblocks. I'll be explaining each point of importance and detailing the results I've got:</p>
+
+    <h3>• There's no official distributed API by any party</h3>
+
+    <p>No parking service application that distributes an API for developers to use. So you have to try and scrape their protocol on your own.</p>
+
+    <h3>• Apps use HTTPS, and worse, HTST for authentication;</h3>
+
+    <p>HTTPS is a method of encryption of the information of requests from a user to a server, or vice-versa. Considering this, to listen to requests between both parties, I had to use some 3rd party software to bypass these certificate.</p>
+
+    <p>I searched on forums and contacted a friend that is more into networks, and the recommendation I got was to download and setup <b>mitmproxy</b>, with <b>mitmweb</b> to analyse all incoming traffic from an Android emulator or the actual web browser.</p>
+    
+    <p style="background: black; color: white; font-family: monospace;"><b>#1 - Telpark</b></p>
+
+    <p>First, I tried to scrape these requests through Telpark, which has a web app, and considering that it's easier  to spoof the SSL certificates in a normal PC than an Android Emulator, I thought it was the right choice, but it seems like they do something with their information before sending (or I just don't get it), as it's not clear. </p>
+
+    <img src="scuffed.png" width="1200"></img>
+
+    <br>
+
+    <p>And these requests were possible because I was already logged in. On Telpark's authentication process, they use HTST, which requires valid SSL certificates, so <b>I couldn't even connect to the app</b> if I was using mitmproxy.</p>
+
+    <p style="background: black; color: white; font-family: monospace;"><b>#1 - ePark</b></p>
+
+    <p>When I tried with ePark, I was successful. It seems they don't even use HTTPS! I could grab my information on the requests sent, and check all the data sent to the app through their responses. In this example, shown in the pictures below, I authenticate my account and check my past parkings:</p>
+
+    <img src="auth.png" width="700"></img>
+
+    <br><br>
+
+    <img src="trip.png" width="540"></img>
+
+    <p>We can then make a small script that mimics these requests and send them without any interaction with the app, just sending my account details and getting a success messagen and user auth token:</p>
+
+    <img src="script.png" width="540"></img>
+ 
+    <h3>• Accessing these services in a 3rd party application (like we are) is illegal</h3>
+
+    <p>The companies that built these parking service apps actually block any 3rd party use on their terms of service. It's very illegal to access these in any way shape or form that is not from their own products.</b></p>
+
+    <p style="background: black; color: white; font-family: monospace;"><b>Via Verde</b></p>
+
+    <a href="https://www.viaverde.pt/Portals/0/Documentos/TermosCondicoes/Termos_de_Utiliza%C3%A7%C3%A3o_Servi%C3%A7o_Aplicacional_Estacionamento_em_zonas_de_Dura%C3%A7%C3%A3o_Limitada_New.pdf">Terms of Service</a>
+    <br>
+    <br>
+
+    <div style="padding: 24px; border: 1px solid black">
+        <p style="margin-top: 0">5.5. The Customer or User (when applicable) may not, in particular:</p>
+        <span>i. modify, decompile, transfer to another terminal or make the third parties access to the Application;</span><br>
+        <span>ii. use the Application for unauthorized purposes or remove any copyright notice, trademark commercial or proprietary rights notices;</span><br>
+        <span>iii. perform any acts that may cause harm, including damage to image or damage to reputation of Via Verde Portugal;</span><br>
+        <span>iv. perform any type of intervention or reverse engineering on the Application;</span><br>
+        <span>v. delete or modify any mentions relating to intellectual property and confidentiality, or any mark, legend or symbol.</span><br>
+        <p>5.6. The Client or User (when applicable) may not, within the scope of using the Application, practice any of the following acts, including:</p>
+        <span>i. access the Application through means other than those made available, or use forms modified software with the aim, in particular, of obtaining unauthorized access;</span>
+    </div>
+
+
+    
+    <p style="background: black; color: white; font-family: monospace;"><b>Telpark</b></p>
+
+    <a href="https://www.telpark.com/pt/terms/">Terms of Service</a>
+    <br>
+    <br>
+
+    <div style="padding: 24px; border: 1px solid black">
+        Total or partial reproduction, copying or modification of the contents included in the TELPARK application or on its website is completely prohibited. The unauthorized use of these contents will give rise to legally protected liabilities. User access to TELPARK, both “app” and “web page”, does not imply any type of waiver, transmission or assignment, in whole or in part, of said property rights. In this way, access to these contents or elements does not grant the user, in any case, the possibility of copying, selling, modifying, reproducing, publishing, assigning, transmitting or creating new products or services derived from the information and elements contained herein. . The user does not acquire rights or license in relation to the service or the elements included therein, except the limited right to use the service, in accordance with the applicable conditions. You will only be able to use the contents or elements that you access through TELPARK services for your own use and needs, being obliged not to carry out, either directly or imposed, a commercial exploitation, nor of the services, materials, elements or information received through the same.
+    </div>
+
+    <p>Considering this, the only workaround (and the very best scenario) would be establishing a partnership with any of these companies (Telpark/Empark, EMEL or Via Verde) and actually integrate their private API into our application.</p>
+    
+    <h1>Conclusion: this is doable, but very illegal without permission.</h1>
+
+</body>
